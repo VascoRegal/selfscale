@@ -15,7 +15,7 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"errors"
-	"fmt"
+	//"fmt"
 	"log"
 	"net"
 	"net/http"
@@ -82,7 +82,7 @@ func Config(host string, ht *health.Tracker, base *tls.Config) *tls.Config {
 		if ht != nil {
 			if certIsSelfSigned(cs.PeerCertificates[0]) {
 				// Self-signed certs are never valid.
-				ht.SetTLSConnectionError(cs.ServerName, fmt.Errorf("certificate is self-signed"))
+				// ht.SetTLSConnectionError(cs.ServerName, fmt.Errorf("certificate is self-signed"))
 			} else {
 				// Ensure we clear any error state for this ServerName.
 				ht.SetTLSConnectionError(cs.ServerName, nil)
