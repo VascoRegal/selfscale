@@ -114,6 +114,7 @@ func newUpFlagSet(goos string, upArgs *upArgsT, cmd string) *flag.FlagSet {
 	upf.StringVar(&upArgs.advertiseRoutes, "advertise-routes", "", "routes to advertise to other nodes (comma-separated, e.g. \"10.0.0.0/8,192.168.0.0/24\") or empty string to not advertise routes")
 	upf.BoolVar(&upArgs.advertiseConnector, "advertise-connector", false, "advertise this node as an app connector")
 	upf.BoolVar(&upArgs.advertiseDefaultRoute, "advertise-exit-node", false, "offer to be an exit node for internet traffic for the tailnet")
+	upf.BoolVar(&upArgs.allowSelfSigned, "allow-self-signed", false, "allow the use of self-signed certificates")
 
 	if safesocket.GOOSUsesPeerCreds(goos) {
 		upf.StringVar(&upArgs.opUser, "operator", "", "Unix username to allow to operate on tailscaled without sudo")
@@ -178,6 +179,7 @@ type upArgsT struct {
 	timeout                time.Duration
 	acceptedRisks          string
 	profileName            string
+	allowSelfSigned	       bool
 }
 
 func (a upArgsT) getAuthKey() (string, error) {
@@ -289,6 +291,7 @@ func prefsFromUpArgs(upArgs upArgsT, warnf logger.Logf, st *ipnstate.Status, goo
 	prefs.OperatorUser = upArgs.opUser
 	prefs.ProfileName = upArgs.profileName
 	prefs.AppConnector.Advertise = upArgs.advertiseConnector
+	prefs.AllowSelfSigned = upArgs.allowSelfSigned
 
 	if goos == "linux" {
 		prefs.NoSNAT = !upArgs.snat
@@ -757,6 +760,7 @@ func init() {
 	addPrefFlagMapping("auto-update", "AutoUpdate.Apply")
 	addPrefFlagMapping("advertise-connector", "AppConnector")
 	addPrefFlagMapping("posture-checking", "PostureChecking")
+	addPrefFlagMapping("allow-self-signed", "AllowSelfSigned")
 }
 
 func addPrefFlagMapping(flagName string, prefNames ...string) {
@@ -1020,6 +1024,8 @@ func prefsToFlags(env upCheckEnv, prefs *ipn.Prefs) (flagVal map[string]any) {
 			set(prefs.NetfilterMode.String())
 		case "unattended":
 			set(prefs.ForceDaemon)
+		case "allow-self-signed":
+			set(prefs.AllowSelfSigned)
 		}
 	})
 	return ret

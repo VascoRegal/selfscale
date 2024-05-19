@@ -68,6 +68,7 @@ var _PrefsCloneNeedsRegeneration = Prefs(struct {
 	NetfilterKind          string
 	DriveShares            []*drive.Share
 	Persist                *persist.Persist
+	AllowSelfSigned	       bool
 }{})
 
 // Clone makes a deep copy of ServeConfig.

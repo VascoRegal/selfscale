@@ -15,7 +15,7 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"errors"
-	//"fmt"
+	"fmt"
 	"log"
 	"net"
 	"net/http"
@@ -26,6 +26,7 @@ import (
 
 	"tailscale.com/envknob"
 	"tailscale.com/health"
+	"tailscale.com/ipn"
 )
 
 var counterFallbackOK int32 // atomic
@@ -54,6 +55,7 @@ func Config(host string, ht *health.Tracker, base *tls.Config) *tls.Config {
 	} else {
 		conf = base.Clone()
 	}
+	p := ipn.NewPrefs()
 	conf.ServerName = host
 
 	if n := sslKeyLogFile; n != "" {
@@ -75,14 +77,16 @@ func Config(host string, ht *health.Tracker, base *tls.Config) *tls.Config {
 	// Set InsecureSkipVerify to prevent crypto/tls from doing its
 	// own cert verification, as do the same work that it'd do
 	// (with the baked-in fallback root) in the VerifyConnection hook.
+
+	fmt.Print("--allow-self-signed = ", p.AllowSelfSigned)
 	conf.InsecureSkipVerify = true
 	conf.VerifyConnection = func(cs tls.ConnectionState) error {
 		// Perform some health checks on this certificate before we do
 		// any verification.
 		if ht != nil {
-			if certIsSelfSigned(cs.PeerCertificates[0]) {
+			if (!p.AllowSelfSigned && certIsSelfSigned(cs.PeerCertificates[0])) {
 				// Self-signed certs are never valid.
-				// ht.SetTLSConnectionError(cs.ServerName, fmt.Errorf("certificate is self-signed"))
+				ht.SetTLSConnectionError(cs.ServerName, fmt.Errorf("certificate is self-signed"))
 			} else {
 				// Ensure we clear any error state for this ServerName.
 				ht.SetTLSConnectionError(cs.ServerName, nil)

@@ -132,6 +132,7 @@ var _PrefsViewNeedsRegeneration = Prefs(struct {
 	NetfilterKind          string
 	DriveShares            []*drive.Share
 	Persist                *persist.Persist
+	AllowSelfSigned        bool
 }{})
 
 // View returns a readonly view of ServeConfig.

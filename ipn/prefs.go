@@ -258,6 +258,9 @@ type Prefs struct {
 	//  We can maybe do that once we're sure which module should persist
 	//  it (backend or frontend?)
 	Persist *persist.Persist `json:"Config"`
+
+	// Allow the use of self-signed certs
+	AllowSelfSigned bool
 }
 
 // AutoUpdatePrefs are the auto update settings for the node agent.
@@ -325,6 +328,7 @@ type MaskedPrefs struct {
 	AppConnectorSet           bool                `json:",omitempty"`
 	PostureCheckingSet        bool                `json:",omitempty"`
 	NetfilterKindSet          bool                `json:",omitempty"`
+	AllowSelfSigned	          bool		      `json:",omitempty"`
 	DriveSharesSet            bool                `json:",omitempty"`
 }
 
@@ -605,7 +609,8 @@ func (p *Prefs) Equals(p2 *Prefs) bool {
 		p.AppConnector == p2.AppConnector &&
 		p.PostureChecking == p2.PostureChecking &&
 		slices.EqualFunc(p.DriveShares, p2.DriveShares, drive.SharesEqual) &&
-		p.NetfilterKind == p2.NetfilterKind
+		p.NetfilterKind == p2.NetfilterKind &&
+		p.AllowSelfSigned == p2.AllowSelfSigned
 }
 
 func (au AutoUpdatePrefs) Pretty() string {
@@ -667,6 +672,7 @@ func NewPrefs() *Prefs {
 		CorpDNS:             true,
 		WantRunning:         false,
 		NetfilterMode:       preftype.NetfilterOn,
+		AllowSelfSigned:     false,
 		NoStatefulFiltering: opt.NewBool(false),
 		AutoUpdate: AutoUpdatePrefs{
 			Check: true,
