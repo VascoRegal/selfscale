@@ -1,4 +1,4 @@
-# Trustscale
+# Selfscale
 
 Tailscale fork to support the use of self-signed certificates. Useful when self-hosting the whole Tailscale infrastructure in a private environment.
 
