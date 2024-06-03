@@ -61,8 +61,8 @@ staticcheck: ## Run staticcheck.io checks
 kube-generate-all: kube-generate-deepcopy ## Refresh generated files for Tailscale Kubernetes Operator
 	./tool/go generate ./cmd/k8s-operator
 
-build_trustscale: ## Build ubuntu installation zip
-	./build_trustscale.sh 	
+build_selfscale: ## Build ubuntu installation zip
+	./build_selfscale.sh 	
 
 # Tailscale operator watches Connector custom resources in a Kubernetes cluster
 # and caches them locally. Caching is done implicitly by controller-runtime

@@ -9,7 +9,7 @@ go install tailscale.com/cmd/tailscale{,d}
 
 # Zip required files
 
-zip -j trustscale/trustscale.zip tailscale tailscaled trustscale/tailscaled.service
+zip -j selfscale/selfscale.zip tailscale tailscaled selfscale/tailscaled.service
 
 # Delete binaries
 
